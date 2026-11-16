@@ -1,0 +1,90 @@
+== 1. A schema by hand ==
+{
+ "type": "function",
+ "function": {
+  "name": "get_metrics",
+  "description": "Current CPU %, memory %, error % and p95 latency (ms) of one Brightcart service.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "service": {
+     "type": "string",
+     "enum": [
+      "web",
+      "checkout",
+      "payments",
+      "inventory",
+      "search",
+      "email-worker"
+     ]
+    }
+   },
+   "required": [
+    "service"
+   ]
+  }
+ }
+}
+
+== 2. Our own @tool: build the schema from the function ==
+{
+ "type": "function",
+ "function": {
+  "name": "read_logs",
+  "description": "Return the last n log lines of one Brightcart service.",
+  "parameters": {
+   "type": "object",
+   "properties": {
+    "service": {
+     "type": "string"
+    },
+    "n": {
+     "type": "integer"
+    }
+   },
+   "required": [
+    "service"
+   ]
+  }
+ }
+}
+
+== 3. The library version: LangChain's @tool ==
+{
+ "type": "function",
+ "function": {
+  "name": "read_logs_lc",
+  "description": "Return the last n log lines of one Brightcart service.",
+  "parameters": {
+   "properties": {
+    "service": {
+     "type": "string"
+    },
+    "n": {
+     "default": 20,
+     "type": "integer"
+    }
+   },
+   "required": [
+    "service"
+   ],
+   "type": "object"
+  }
+ }
+}
+same property names: True | same required: True | library adds: ['default']
+
+== 4. Names and descriptions decide which tool is picked (8 runs each) ==
+vague names: right tool 6/8 -> ['tool_b', 'tool_a', 'tool_a', 'tool_a', 'tool_b', 'tool_a', 'tool_a', 'tool_a']
+clear names: right tool 8/8 -> ['get_metrics', 'get_metrics', 'get_metrics', 'get_metrics', 'get_metrics', 'get_metrics', 'get_metrics', 'get_metrics']
+
+== 5. Truncate big results ==
+2000 lines: 34000 tokens | last 20 + a note: 357 tokens
+input cost per call at $0.075/M: $0.002550 vs $0.000027
+
+== 6. Least privilege: what each tool can touch ==
+read_logs            read
+get_metrics          read
+rollback_deploy      WRITE
+restart_service      WRITE
+run_sql(any query)   WRITE + READ ALL

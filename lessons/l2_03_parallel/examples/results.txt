@@ -1,0 +1,43 @@
+== 1. How many tool calls in one reply? (3 tries each) ==
+openai/gpt-oss-20b     -> [1, 1, 1]
+qwen/qwen3.8-27b       -> [4, 4, 4]
+
+qwen's reply asks for:
+  r9cb7cvb  service_status({"service":"checkout"})
+  sp3z4xf8  service_status({"service":"payments"})
+  2rd37hg5  read_logs({"service":"payments"})
+  nv793n5g  recent_deploys({})
+
+== 2. Run them one by one vs at the same time ==
+each tool takes 0.8 s | one by one: 3.2 s | at once: 0.8 s | same results: True
+
+== 3. Every call gets exactly one result, matched by id ==
+  tool result for r9cb7cvb: {"checkout": {"version": "v3.0.1", "replicas": 3, "cpu": 26, "mem": 31
+  tool result for sp3z4xf8: {"payments": {"version": "v1.3.5", "replicas": 2, "cpu": 39, "mem": 53
+  tool result for 2rd37hg5: ["04:13 ERROR payments KeyError: 'currency' in serializer (v1.3.5)", "
+  tool result for nv793n5g: [{"t": "04:12", "service": "payments", "version": "v1.3.5", "by": "ci"
+
+== 4. Forget one result: what happens? ==
+accepted, no error. Model then: answers: Here's the picture:
+
+**Checkout (v3.0.1)** — the problem child
+- Error rate **16.3%** (your 23% figure is consistent with this being the dominant cont
+
+== 5. Whole loop until the answer: one call per turn vs several ==
+   [openai/gpt-oss-20b] 400 on turn 4: Failed to parse tool call arguments as JSON -> nudge and retry
+openai/gpt-oss-20b     turns 6  tool calls 5  time 7.5 s
+   answer: **Current System Snapshot**
+
+| Service | Version | Replicas | CPU % | Mem % | Error % | p95 Latency ms | Restarts |
+|---------|---------|----------|-------|-------|---------|----------------|----------|
+| **checkout** | 
+qwen/qwen3.8-27b       turns 2  tool calls 4  time 2.7 s
+   answer: ## Findings
+
+**Root cause: payments v1.3.5 (deployed 04:12 by CI) introduced a serializer bug.**
+
+### Evidence
+- **payments logs** show `ERROR KeyError: 'currency' in serializer (v1.3.5)` at 04:13 — one minute after the 
+
+== 6. Malformed tool calls the server rejected during this run (retried) ==
+0 x

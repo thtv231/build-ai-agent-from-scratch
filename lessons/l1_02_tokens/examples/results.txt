@@ -1,0 +1,34 @@
+== 1. Text becomes tokens ==
+'checkout'             -> 1 tokens: ['checkout']
+'Brightcart'           -> 2 tokens: ['Bright', 'cart']
+'error rate is 23%'    -> 6 tokens: ['error', ' rate', ' is', ' ', '23', '%']
+'Nightwatch'           -> 2 tokens: ['Night', 'watch']
+system text: 20 tokens | user text: 14 tokens | sum: 34
+
+== 2. What the API counts ==
+prompt_tokens: 108 | our count of the two texts: 34 | extra (roles, wrappers, default instructions): 74
+completion_tokens: 102 | reasoning_tokens: 72 | tokens in the visible answer: 21
+hidden reasoning (first 160 chars): We need to answer in one sentence. The user says: "Alert: checkout error rate is 23%. What does that mean?" We need to explain what that means. In one sentence.
+
+== 3. Cost by hand ==
+108 x $0.075/M + 102 x $0.30/M = $0.00003870
+one million such calls: $38.70
+an agent run of 11,000 tokens (90% input): $0.001073
+
+== 4. Temperature: same question, five times ==
+temperature 0: 1 different answers out of 5
+   5x Payment gateway outage.
+temperature 1: 3 different answers out of 5
+   2x Payment gateway timeout.
+   2x Payment gateway outage.
+   1x Database timeout from traffic surge.
+
+== 5. Reasoning effort ==
+low    -> answer '6'    completion_tokens   49  reasoning_tokens 39
+medium -> answer '6'    completion_tokens   92  reasoning_tokens 82
+high   -> answer '6'    completion_tokens  344  reasoning_tokens 334
+
+== 6. Temperature 0, one-sentence answer, eight times ==
+2 different answers out of 8; completion tokens: [102, 102, 113, 102, 102, 113, 113, 102]
+   5x It means that nearly one in four checkout attempts are failing, indicating a significant issue that needs imme
+   3x It means that nearly one in four checkout attempts are failing—23 % of all checkout transactions are encounter

@@ -1,0 +1,53 @@
+== 1. Replay coverage: 180 baseline runs, cache only, no API calls ==
+replay reproduces 39 of 180 runs exactly; the rest hit a model call that is not in the cache
+(the cache does not hold every reply of those runs; a replay stops at the first missing one)
+bad_deploy-4 s1 (rollback twice + restart) replayable: False
+
+== 2. The trace of a real no-finish run: stuck_consumer-0, sample 2 (exact replay) ==
+alert: queue email_outbox depth above 1000 | hidden fix: ['restart_service', 'email-worker', None]
+ 0 step  0 queue_depth      {"service": "email_outbox"}                          -> {'email_outbox': 7734}
+ 1 step  1 read_logs        {"n": 20, "service": "email_outbox"}                 -> ERROR: "unknown service 'email_outbox'"
+ 2 step  2 query_db         {"sql": "SELECT name, state, replicas FROM services  -> ERROR: no such column: state
+ 3 step  3 service_status   {"service": "email_outbox"}                          -> ERROR: "unknown service 'email_outbox'; known: web, che
+ 4 step  4 read_logs        {"n": 20, "service": "email-worker"}                 -> ['03:16 INFO email-worker handled request id=77216 in 1
+ 5 step  5 read_runbook     {"topic": "stuck_consumer"}                          -> ERROR: "no runbook 'stuck_consumer'; topics: high-error
+ 6 step  6 recent_deploys   {}                                                   -> []
+ 7 step  7 config_changes   {}                                                   -> []
+ 8 step  8 service_status   {"service": "email-worker"}                          -> {'email-worker': {'version': 'v2.4.2', 'replicas': 2, '
+ 9 step  9 read_logs        {"n": 50, "service": "email-worker"}                 -> ['03:16 INFO email-worker handled request id=77216 in 1
+10 step 10 read_logs        {"n": 200, "service": "email-worker"}                -> ['03:16 INFO email-worker handled request id=77216 in 1
+11 step 11 read_logs        {"n": 200, "service": "email-worker"}                -> ['03:16 INFO email-worker handled request id=77216 in 1
+12 step 12 read_logs        {"n": 200, "service": "email-worker"}                -> ['03:16 INFO email-worker handled request id=77216 in 1
+13 step 13 restart_service  {"service": "email-worker"}                          -> restart_service(email-worker) done.
+stop: step limit | final None | healthy True | writes [('restart_service', 'email-worker', None)]
+
+== 3. Detector on that trace ==
+  (a) identical read x3: read_logs{"n": 200, "service": "email-worker"}
+
+== 4. Detector on every exact-replay trace ==
+bad_deploy-2       s0 PASS  (a) identical WRITE x2: rollback_deploy{"service": "web"} | (c) 5 entries after the fix at entry 3
+bad_deploy-3       s1 PASS  (c) 3 entries after the fix at entry 4
+bad_deploy-5       s0 PASS  (c) 3 entries after the fix at entry 3
+false_alarm-5      s0 PASS  (a) identical read x2: check_health{}
+memory_leak-5      s2 fail  (b) health green at entry 12 but no finish() | (c) 3 entries after the fix at entry 10
+stuck_consumer-0   s2 fail  (a) identical read x3: read_logs{"n": 200, "service": "email-worker"}
+stuck_consumer-2   s0 fail  (a) identical read x3: read_logs{"n": 200, "service": "email-worker"}
+stuck_consumer-3   s0 PASS  (c) 3 entries after the fix at entry 8
+stuck_consumer-3   s2 PASS  (c) 3 entries after the fix at entry 9
+stuck_consumer-5   s1 fail  (a) identical read x2: read_logs{"n": 50, "service": "email-worker"} | (a) identical read x2: read_logs{"n": 200, "service": "email-worker"}
+traffic_spike-0    s0 fail  (a) identical read x2: recent_deploys{} | (a) identical WRITE x2: scale_service{"replicas": 3, "service": "web"}
+traffic_spike-1    s0 fail  (b) health green at entry 13 but no finish()
+traffic_spike-4    s1 fail  (b) health green at entry 13 but no finish()
+runs with full traces: 39; flags: {'(a) WRITE': 2, '(c)': 6, '(a) read': 6, '(b)': 3}
+
+== 5. Counts over all 180 baseline runs from the jsonl (no traces needed) ==
+(a) runs with an identical repeated write: 44  e.g. bad_deploy-0 s0 [['rollback_deploy', 'checkout', None], ['rollback_deploy', 'checkout', None]], bad_deploy-1 s0 [['rollback_deploy', 'inventory', None], ['rollback_deploy', 'inventory', None]], bad_deploy-1 s2 [['rollback_deploy', 'inventory', None], ['rollback_deploy', 'inventory', None]]
+no-finish runs: 46, all at the 14-step limit: True
+(b) no finish but the system ends healthy: 31 of 46  (the jsonl stores only the END health, not when it first turned green)
+(c) runs that wrote again after the right fix: 45  e.g. bad_deploy-0 s0 [['rollback_deploy', 'checkout', None], ['rollback_deploy', 'checkout', None]], bad_deploy-1 s0 [['rollback_deploy', 'inventory', None], ['rollback_deploy', 'inventory', None]], bad_deploy-1 s2 [['rollback_deploy', 'inventory', None], ['rollback_deploy', 'inventory', None]]
+pass rate of those (c) runs: 26/45; of (b) runs: 0/31
+by template, (b) runs: {'bad_deploy': 2, 'upstream_deploy': 2, 'memory_leak': 7, 'traffic_spike': 5, 'bad_flag': 3, 'stuck_consumer': 5, 'expired_secret': 2, 'pool_config': 4, 'disk_full': 1}
+
+== 6. Before/after: the same 30 runs as lesson 3.2, v0 vs v0 + stop conditions (guards) ==
+before (jsonl): {'(a) repeated write': 7, '(b) healthy, no finish': 15, '(c) write after fix': 9, 'no finish': 24}
+after  (replayed lesson 3.2 runs, guards=True): {'(a) repeated write': 0, '(b) healthy, no finish': 10, '(c) write after fix': 4, 'no finish': 14}

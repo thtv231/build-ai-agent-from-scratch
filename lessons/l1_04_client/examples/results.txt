@@ -1,0 +1,19 @@
+== 1. Read the wire: the rate-limit headers on a normal reply ==
+status: 200
+  x-ratelimit-limit-requests: 500000
+  x-ratelimit-remaining-requests: 499998
+  x-ratelimit-limit-tokens: 250000
+  x-ratelimit-remaining-tokens: 248080
+  x-ratelimit-reset-tokens: 460ms
+
+== 2. Twenty calls at once, no retry ==
+results: [200, 200, 200, 200, 'ConnectError', 200, 200, 200, 'ConnectError', 'ConnectError', 'ConnectError', 'ConnectError', 200, 200, 200, 200, 200, 200, 200, 200]
+ok: 15 | failed: 5 | kinds: ['ConnectError']
+
+== 3. The same twenty, with retry + exponential backoff + jitter ==
+ok: 20 of 20 | retries used: 8 | total time 21.1 s | longest wait 1.4 s
+
+== 4. Record / replay cache ==
+run 1: record    460.1 ms  tokens billed  193  -> A 23 % checkout error rate means that roughly one in four ch...
+run 2: replay     14.9 ms  tokens billed    0  -> A 23 % checkout error rate means that roughly one in four ch...
+files in cache: 1 | key = sha256 of the request body

@@ -1,0 +1,26 @@
+== A. Baseline no-finish runs that ended healthy ==
+31 of 46
+
+== B. pool_config-3 sample 1 with guards (trace) ==
+ 1  service_status({"service": "checkout"}) -> {'checkout': {'version': 'v2.7.3', 'replicas': 3, 'cpu': 29,
+ 2  read_logs({"n": 20, "service": "checkout"}) -> ['02:07 INFO checkout handled request id=58103 in 29ms', '02
+ 3  (malformed tool call)
+ 4  recent_deploys({}) -> [{'t': '02:01', 'service': 'inventory', 'version': 'v3.3.6',
+ 5  service_status({"service": "inventory"}) -> {'inventory': {'version': 'v3.3.6', 'replicas': 2, 'cpu': 43
+ 6  config_changes({}) -> [{'t': '02:20', 'service': 'checkout', 'key': 'db_pool_size'
+ 7  set_config({"key": "db_pool_size", "service": "checkout", "va) -> set_config(checkout) done.
+ 8  check_health({}) -> {'healthy': True, 'unhealthy_services': [], 'queues_over_lim
+ 9  (malformed tool call)
+10  finish({"cause": "bad_config", "root_cause_service": "che) -> ok
+stop: finish | steps: 10 | final: {'cause': 'bad_config', 'root_cause_service': 'checkout', 'summary': 'Checkout latency spike due to db_pool_size being set to 2, causing connection wait times. Restored to 20.'}
+
+== C. Incidents that stayed 'no finish' after the guards ==
+stuck_consumer-1  s0  stop=step limit  green health checks 0
+stuck_consumer-1  s1  stop=step limit  green health checks 0
+stuck_consumer-1  s2  stop=step limit  green health checks 0
+traffic_spike-1   s0  stop=step limit  green health checks 1
+traffic_spike-1   s1  stop=step limit  green health checks 0
+traffic_spike-1   s2  stop=step limit  green health checks 0
+
+== D. Same run, token_budget=5000 ==
+stop: token budget | steps: 6 | tokens: 5285

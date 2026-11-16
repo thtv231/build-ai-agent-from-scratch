@@ -1,0 +1,38 @@
+== 1. The graph (draw_mermaid) ==
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	model(model)
+	tools(tools)
+	__end__([<p>__end__</p>]):::last
+	__start__ --> model;
+	model -.-> __end__;
+	model -.-> tools;
+	tools --> model;
+	model -.-> model;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
+
+== 2. Node by node (stream_mode='updates') ==
+ 1 model  asks check_health({"":""})
+ 2 tools  -> {"healthy": false, "unhealthy_services": ["checkout", "payments"], "queues_over_limit": {}}
+ 3 model  asks recent_deploys({"":""})
+ 4 tools  -> [{"t": "04:12", "service": "payments", "version": "v1.3.5", "by": "ci"}, {"t": "04:01", "servic
+ 5 model  asks read_logs({"service":"checkout"})
+ 6 tools  -> ["04:10 WARN checkout slow GC pause 120ms", "04:13 ERROR checkout upstream payments returned 50
+ 7 model  asks rollback_deploy({"service":"payments"})
+ 8 tools  -> "rollback_deploy(payments) done."
+ 9 model  asks check_health({"":""})
+10 tools  -> {"healthy": true, "unhealthy_services": [], "queues_over_limit": {}}
+11 model  assistant: '**Action taken**\n\n1. **Identified the issue** – The `checkout` service was reporting an error rate >\u202f5%.  \n2. **Checked health** – `checkout` and `payments` were flagged as unhealthy.  \n3. **Reviewed recent deployments** – The latest deployment for `payments` was `v1.3.5` at 04:12.  \n4. **Examined l'
+
+healthy True | writes [('rollback_deploy', 'payments', None)]
+
+== 3. recursion_limit = 4 on a fresh world ==
+GraphRecursionError: Recursion limit of 4 reached without hitting a stop condition. You can increase the limit by setting the `recursion_limit` config key.
+world after the stop: healthy False | writes []

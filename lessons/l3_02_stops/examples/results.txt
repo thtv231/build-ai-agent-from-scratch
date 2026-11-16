@@ -1,0 +1,43 @@
+== 1. Baseline v0: why runs failed (180 runs) ==
+{'pass': 124, 'no finish': 46, 'extra writes': 9, 'wrong service': 1}
+10 incidents with the most no-finish runs: ['pool_config-3', 'stuck_consumer-1', 'stuck_consumer-5', 'traffic_spike-1', 'memory_leak-0', 'memory_leak-1', 'memory_leak-2', 'memory_leak-4', 'memory_leak-5', 'stuck_consumer-0']
+
+== 2. Steps used by no-finish runs ==
+steps: [14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14]
+
+== 3. Same incidents, same samples: v0 vs v0 + stop conditions ==
+pool_config-3        s0  before no finish     steps 14  |  after pass          steps 14  stop=finish      blocked repeats 0
+pool_config-3        s1  before no finish     steps 14  |  after pass          steps 10  stop=finish      blocked repeats 0
+pool_config-3        s2  before no finish     steps 14  |  after pass          steps  9  stop=finish      blocked repeats 0
+stuck_consumer-1     s0  before no finish     steps 14  |  after no finish     steps 14  stop=step limit  blocked repeats 0
+stuck_consumer-1     s1  before no finish     steps 14  |  after no finish     steps 14  stop=step limit  blocked repeats 0
+stuck_consumer-1     s2  before no finish     steps 14  |  after no finish     steps 14  stop=step limit  blocked repeats 0
+stuck_consumer-5     s0  before no finish     steps 14  |  after pass          steps 13  stop=finish      blocked repeats 0
+stuck_consumer-5     s1  before no finish     steps 14  |  after no finish     steps 14  stop=step limit  blocked repeats 0
+stuck_consumer-5     s2  before no finish     steps 14  |  after no finish     steps 14  stop=step limit  blocked repeats 0
+traffic_spike-1      s0  before no finish     steps 14  |  after no finish     steps 14  stop=step limit  blocked repeats 0
+traffic_spike-1      s1  before no finish     steps 14  |  after no finish     steps 14  stop=step limit  blocked repeats 1
+traffic_spike-1      s2  before no finish     steps 14  |  after no finish     steps 14  stop=step limit  blocked repeats 0
+memory_leak-0        s0  before no finish     steps 14  |  after pass          steps 13  stop=finish      blocked repeats 0
+memory_leak-0        s1  before pass          steps 13  |  after pass          steps  9  stop=finish      blocked repeats 0
+memory_leak-0        s2  before no finish     steps 14  |  after extra writes  steps 13  stop=finish      blocked repeats 0
+memory_leak-1        s0  before wrong service steps 11  |  after no finish     steps 14  stop=step limit  blocked repeats 0
+memory_leak-1        s1  before no finish     steps 14  |  after no finish     steps 14  stop=step limit  blocked repeats 1
+memory_leak-1        s2  before no finish     steps 14  |  after pass          steps 14  stop=finish      blocked repeats 0
+memory_leak-2        s0  before no finish     steps 14  |  after no finish     steps 14  stop=step limit  blocked repeats 0
+memory_leak-2        s1  before no finish     steps 14  |  after pass          steps  9  stop=finish      blocked repeats 1
+memory_leak-2        s2  before pass          steps 13  |  after pass          steps 13  stop=finish      blocked repeats 0
+memory_leak-4        s0  before no finish     steps 14  |  after pass          steps 12  stop=finish      blocked repeats 0
+memory_leak-4        s1  before no finish     steps 14  |  after no finish     steps 14  stop=step limit  blocked repeats 0
+memory_leak-4        s2  before pass          steps 12  |  after pass          steps 12  stop=finish      blocked repeats 0
+memory_leak-5        s0  before pass          steps 13  |  after pass          steps  7  stop=finish      blocked repeats 0
+memory_leak-5        s1  before no finish     steps 14  |  after pass          steps 14  stop=finish      blocked repeats 1
+memory_leak-5        s2  before no finish     steps 14  |  after pass          steps 14  stop=finish      blocked repeats 0
+stuck_consumer-0     s0  before pass          steps  8  |  after pass          steps  9  stop=finish      blocked repeats 0
+stuck_consumer-0     s1  before no finish     steps 14  |  after no finish     steps 14  stop=step limit  blocked repeats 0
+stuck_consumer-0     s2  before no finish     steps 14  |  after no finish     steps 14  stop=step limit  blocked repeats 0
+
+pass: before 17% -> after 50%  (30 runs each)
+failure kinds after: {'pass': 15, 'no finish': 14, 'extra writes': 1}
+mean tokens per run: before 14,475 -> after 14,286
+mean steps: before 13.5 -> after 12.7

@@ -1,0 +1,30 @@
+== 1. upstream_deploy-0 ==
+start   {"incident": "upstream_deploy-0", "alert": "checkout error rate above 5%", "suspect": null, "unhealthy": [], "evidence": [], "hops": 0, "cause": null, "notes": []}
+step 1 read_alert       update {"suspect": "checkout"}
+step 2 check_health     update {"unhealthy": ["checkout", "payments"]}
+step 3 read_logs        update {"evidence": ["04:13 ERROR checkout upstream payments returned 500 for POST /payments/v2/charge", "04:13 ERROR checkout upstream payments returned 500 for POST /payments/v2/charge"], "hops": 1}
+step 4 follow_upstream  update {"suspect": "payments"}
+step 5 read_logs        update {"evidence": ["04:13 ERROR payments KeyError: 'currency' in serializer (v1.3.5)"], "hops": 2}
+step 6 classify         update {"cause": "bad_deploy"}
+final   {"incident": "upstream_deploy-0", "alert": "checkout error rate above 5%", "suspect": "payments", "unhealthy": ["checkout", "payments"], "evidence": ["04:13 ERROR payments KeyError: 'currency' in serializer (v1.3.5)"], "hops": 2, "cause": "bad_deploy", "notes": ["alert names checkout", "unhealthy: ['checkout', 'payments']", "read checkout logs: 4 bad lines", "errors come from upstream payments", "read payments logs: 1 bad lines", "cause = bad_deploy"]}
+notes   ['alert names checkout', "unhealthy: ['checkout', 'payments']", 'read checkout logs: 4 bad lines', 'errors come from upstream payments', 'read payments logs: 1 bad lines', 'cause = bad_deploy'] 
+
+== 2. false_alarm-0 ==
+start   {"incident": "false_alarm-0", "alert": "web health probe failed (1 of 3), auto-resolved", "suspect": null, "unhealthy": [], "evidence": [], "hops": 0, "cause": null, "notes": []}
+step 1 read_alert       update {"suspect": "web"}
+step 2 check_health     update {"unhealthy": []}
+step 3 false_alarm      update {"cause": "false_alarm"}
+final   {"incident": "false_alarm-0", "alert": "web health probe failed (1 of 3), auto-resolved", "suspect": "web", "unhealthy": [], "evidence": [], "hops": 0, "cause": "false_alarm", "notes": ["alert names web", "unhealthy: []", "all green: false alarm, change nothing"]}
+notes   ['alert names web', 'unhealthy: []', 'all green: false alarm, change nothing'] 
+
+== 3. disk_full-2 ==
+start   {"incident": "disk_full-2", "alert": "search error rate above 5%", "suspect": null, "unhealthy": [], "evidence": [], "hops": 0, "cause": null, "notes": []}
+step 1 read_alert       update {"suspect": "search"}
+step 2 check_health     update {"unhealthy": ["search"]}
+step 3 read_logs        update {"evidence": ["01:50 ERROR search OSError: [Errno 28] No space left on device: '/var/cache/search'", "01:51 ERROR search OSError: [Errno 28] No space left on device: '/var/cache/search'"], "hops": 1}
+step 4 classify         update {"cause": "disk_full"}
+final   {"incident": "disk_full-2", "alert": "search error rate above 5%", "suspect": "search", "unhealthy": ["search"], "evidence": ["01:50 ERROR search OSError: [Errno 28] No space left on device: '/var/cache/search'", "01:51 ERROR search OSError: [Errno 28] No space left on device: '/var/cache/search'"], "hops": 1, "cause": "disk_full", "notes": ["alert names search", "unhealthy: ['search']", "read search logs: 2 bad lines", "cause = disk_full"]}
+notes   ['alert names search', "unhealthy: ['search']", 'read search logs: 2 bad lines', 'cause = disk_full'] 
+
+== 4. The same hand-written flow on all 60 incidents (rules only, no LLM) ==
+right service 54/60 | right cause 54/60 | misses: {'stuck_consumer -> false_alarm': 6}

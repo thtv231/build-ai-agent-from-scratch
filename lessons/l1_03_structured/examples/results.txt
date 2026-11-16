@@ -1,0 +1,56 @@
+== 1. Asking nicely for JSON ==
+raw reply: {"service":"payments","severity":"critical","summary":"Checkout error rate spiked to 23% due to upstream payments service returning 500 errors on POST /payments/v2/charge after deployment of payments v1.3.5 at 02:12. Immediate investigation required."}
+json.loads: ok -> {'service': 'payments', 'severity': 'critical', 'summary': 'Checkout error rate spiked to 23% due to upstream payments service returning 500 errors on POST /payments/v2/charge after deployment of payments v1.3.5 at 02:12. Immediate investigation required.'}
+
+== 2. Validate with Pydantic ==
+good            -> OK service='payments' severity='high' summary='payments v1.3.5 breaks checkout'
+wrong severity  -> literal_error: ('severity',) Input should be 'critical', 'high' or 'low'
+missing key     -> missing: ('severity',) Field required
+markdown fence  -> json_invalid: () Invalid JSON: expected value at line 1 column 1
+
+== 3. The schema the model will get ==
+{
+ "properties": {
+  "service": {
+   "description": "the service that is most likely broken",
+   "title": "Service",
+   "type": "string"
+  },
+  "severity": {
+   "enum": [
+    "critical",
+    "high",
+    "low"
+   ],
+   "title": "Severity",
+   "type": "string"
+  },
+  "summary": {
+   "maxLength": 120,
+   "title": "Summary",
+   "type": "string"
+  }
+ },
+ "required": [
+  "service",
+  "severity",
+  "summary"
+ ],
+ "title": "Triage",
+ "type": "object"
+}
+
+== 4. JSON schema mode (strict) ==
+try 1, plain schema -> 400: invalid JSON schema for response_format: 'triage': `additionalProperties:false` must be set on every object
+additionalProperties now: False
+try 2 raw: {"service":"payments","severity":"high","summary":"Checkout error rate 23% due to upstream payments 500 on POST /payments/v2/charge"}
+validated: service='payments' severity='high' summary='Checkout error rate 23% due to upstream payments 500 on POST /payments/v2/charge'
+
+== 5. Validate, and on failure send the error back ==
+attempt 1: invalid -> Input should be 'critical', 'high' or 'low'
+attempt 2: valid -> service='payments' severity='critical' summary='Payments service experiencing high error rate (23%) due to upstream 500 errors on /payments/v2/charge'
+calls needed: 2
+
+== 1b. Section 1's reply through the Pydantic check ==
+summary length: 195 characters (limit 120)
+string_too_long: ('summary',) String should have at most 120 characters

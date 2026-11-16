@@ -1,0 +1,45 @@
+== 1. Same replies in, same trajectory out? (scripted model, no API calls) ==
+  differs: memory_leak-5 s2 v0 steps 14 stop step limit malformed replies 1 | create_agent: script ran out: create_agent asked for more model calls than v0 made
+  differs: traffic_spike-0 s0 v0 steps 14 stop step limit malformed replies 2 | create_agent: script ran out: create_agent asked for more model calls than v0 made
+  differs: traffic_spike-1 s0 v0 steps 14 stop step limit malformed replies 1 | create_agent: script ran out: create_agent asked for more model calls than v0 made
+  differs: traffic_spike-1 s2 v0 steps 14 stop step limit malformed replies 1 | create_agent: script ran out: create_agent asked for more model calls than v0 made
+  differs: stuck_consumer-5 s1 v0 steps 14 stop step limit malformed replies 3 | create_agent: script ran out: create_agent asked for more model calls than v0 made
+(v0 counts a malformed reply as one of its 14 steps; retry_malformed retries inside one model call,
+ so create_agent gets more model calls before ModelCallLimitMiddleware stops it)
+exact-replay runs: 39 | identical trajectory (tool+args, writes, finish) 34/39 | same grade 34/39
+
+== 2. Live, k=1, temperature 1.0: 10 incidents (lesson 3.6), v0 vs create_agent ==
+bad_deploy-2       jsonl PASS | v0 PASS steps  9 | create_agent PASS steps  7 retries 5 | same sequence False
+   v0: ['service_status', 'read_logs', 'recent_deploys', 'rollback_deploy', 'check_health', 'rollback_deploy', 'check_health', 'finish']
+   ca: ['service_status', 'read_logs', 'recent_deploys', 'rollback_deploy', 'check_health', 'rollback_deploy', 'finish']
+upstream_deploy-1  jsonl PASS | v0 PASS steps  8 | create_agent PASS steps  8 retries 2 | same sequence False
+   v0: ['check_health', 'read_logs', 'read_logs', 'recent_deploys', 'rollback_deploy', 'check_health', 'finish']
+   ca: ['check_health', 'recent_deploys', 'read_logs', 'read_logs', 'rollback_deploy', 'check_health', 'check_health', 'finish']
+memory_leak-0      jsonl fail | v0 PASS steps 13 | create_agent PASS steps  9 retries 2 | same sequence False
+   v0: ['service_status', 'read_logs', 'recent_deploys', 'config_changes', 'scale_service', 'list_flags', 'restart_service', 'check_health', 'service_status', 'finish']
+   ca: ['service_status', 'read_logs', 'recent_deploys', 'config_changes', 'read_runbook', 'restart_service', 'check_health', 'finish']
+traffic_spike-0    jsonl fail | v0 fail steps 14 | create_agent PASS steps 10 retries 3 | same sequence False
+   v0: ['service_status', 'read_logs', 'recent_deploys', 'recent_deploys', 'list_flags', 'scale_service', 'scale_service', 'check_health', 'list_flags', 'config_changes', 'query_db']
+   ca: ['service_status', 'read_logs', 'scale_service', 'scale_service', 'recent_deploys', 'check_health', 'service_status', 'queue_depth', 'config_changes', 'finish']
+bad_flag-1         jsonl PASS | v0 PASS steps  7 | create_agent PASS steps  7 retries 1 | same sequence False
+   v0: ['check_health', 'read_logs', 'list_flags', 'set_flag', 'check_health', 'finish']
+   ca: ['check_health', 'read_logs', 'list_flags', 'set_flag', 'check_health', 'check_health', 'finish']
+stuck_consumer-1   jsonl fail | v0 fail steps 14 | create_agent fail steps 14 retries 1 | same sequence False
+   v0: ['queue_depth', 'read_logs', 'query_db', 'read_logs', 'recent_deploys', 'service_status', 'config_changes', 'check_health', 'read_logs', 'list_flags', 'read_logs', 'restart_service']
+   ca: ['queue_depth', 'queue_depth', 'recent_deploys', 'read_logs', 'service_status', 'read_logs', 'read_logs', 'read_logs', 'recent_deploys', 'config_changes', 'list_flags', 'service_status', 'query_db', 'restart_service']
+expired_secret-1   jsonl PASS | v0 PASS steps  6 | create_agent PASS steps  7 retries 0 | same sequence False
+   v0: ['check_health', 'read_logs', 'read_logs', 'rotate_secret', 'check_health', 'finish']
+   ca: ['check_health', 'recent_deploys', 'read_logs', 'read_logs', 'rotate_secret', 'check_health', 'finish']
+pool_config-2      jsonl PASS | v0 PASS steps  6 | create_agent PASS steps  8 retries 3 | same sequence False
+   v0: ['service_status', 'recent_deploys', 'config_changes', 'set_config', 'check_health', 'finish']
+   ca: ['check_health', 'read_logs', 'recent_deploys', 'config_changes', 'set_config', 'check_health', 'set_config', 'finish']
+disk_full-2        jsonl fail | v0 fail steps 14 | create_agent PASS steps 10 retries 1 | same sequence False
+   v0: ['service_status', 'recent_deploys', 'read_logs', 'clear_cache', 'clear_cache', 'clear_cache', 'check_health']
+   ca: ['service_status', 'service_status', 'read_logs', 'config_changes', 'clear_cache', 'check_health', 'finish']
+false_alarm-0      jsonl PASS | v0 PASS steps  3 | create_agent PASS steps  6 retries 0 | same sequence False
+   v0: ['check_health', 'recent_deploys', 'finish']
+   ca: ['service_status', 'read_logs', 'read_runbook', 'config_changes', 'recent_deploys', 'finish']
+
+pass: baseline jsonl 6/10 | v0 now 7/10 | create_agent 9/10
+identical tool sequences 0/10 | same first tool 4/10 | same writes 6/10
+tokens: v0 91,465 | create_agent 101,886  (v0 count includes replies replayed from cache)

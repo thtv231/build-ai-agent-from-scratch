@@ -1,0 +1,14 @@
+== One incident, one loop ==
+step 1: check_health({'': ''}) -> {'healthy': False, 'unhealthy_services': ['checkout', 'payments'], 'queues_over_limit': {}
+step 2: recent_deploys({'': ''}) -> [{'t': '04:12', 'service': 'payments', 'version': 'v1.3.5', 'by': 'ci'}, {'t': '04:01', 's
+step 3: rollback_deploy({'service': 'payments'}) -> rollback_deploy(payments) done.
+step 4: read_logs({'service': 'checkout'}) -> ['04:10 WARN checkout slow GC pause 120ms', '04:13 ERROR checkout upstream payments return
+step 5: read_logs({'service': 'payments'}) -> ['04:03 INFO payments handled request id=89645 in 119ms', '04:05 INFO payments handled req
+step 6: read_logs({'service': 'payments'}) -> ['04:03 INFO payments handled request id=89645 in 119ms', '04:05 INFO payments handled req
+step 7: check_health({'': ''}) -> {'healthy': True, 'unhealthy_services': [], 'queues_over_limit': {}}
+step 8: ANSWER  ✅ The **payments** service has been rolled back to the previous stable version, and the system health is now back to normal.  
+The checkout error rate should drop below the 5 % threshold shortly.  
+
+If you notice any further anomalies or need additional assistance, just let me know!
+
+healthy at the end: True | writes made: [('rollback_deploy', 'payments', None)]

@@ -1,0 +1,65 @@
+langchain 1.5.0 | langgraph 1.2.22 | langchain-groq 1.2.0
+
+== 1. Your loop, line by line, in create_agent ==
+  msgs = [system, PAGER]               -> system_prompt=SYSTEM, {"messages": [PAGER]}
+  for step in range(14)                -> ModelCallLimitMiddleware(run_limit=14)
+  out = chat(body)                     -> ChatGroq (same model, temperature 1.0, reasoning medium, 2048 tokens)
+  chat()'s record/replay cache         -> @wrap_model_call  record_replay
+  if "error" in out: nudge, continue   -> @wrap_model_call  retry_malformed
+  if not calls: "Use the tools..."     -> @after_model      nudge_to_tools (jump back to the model)
+  for c in calls: run_tool(...)        -> the 17 tools as StructuredTools (ToolNode runs them)
+  trace.append(...)                    -> @wrap_tool_call   log_tool
+  if name == "finish": break           -> finish tool with return_direct=True
+
+== 2. The middleware stack ==
+  nudge_to_tools               hooks: ['after_model']
+  ModelCallLimitMiddleware     hooks: ['before_model', 'after_model']
+  retry_malformed              hooks: ['wrap_model_call']
+  record_replay                hooks: ['wrap_model_call']
+  log_tool                     hooks: ['wrap_tool_call']
+
+== 3. The graph create_agent built (draw_mermaid) ==
+---
+config:
+  flowchart:
+    curve: linear
+---
+graph TD;
+	__start__([<p>__start__</p>]):::first
+	model(model)
+	tools(tools<hr/><small><em>__tools = service_status, read_logs, recent_deploys, list_flags, config_changes, queue_depth, query_db, read_runbook, check_health, restart_service, rollback_deploy, scale_service, set_flag, set_config, rotate_secret, clear_cache, finish</em></small>)
+	nudge_to_tools\2eafter_model(nudge_to_tools.after_model)
+	ModelCallLimitMiddleware\2ebefore_model(ModelCallLimitMiddleware.before_model)
+	ModelCallLimitMiddleware\2eafter_model(ModelCallLimitMiddleware.after_model)
+	__end__([<p>__end__</p>]):::last
+	ModelCallLimitMiddleware\2eafter_model --> nudge_to_tools\2eafter_model;
+	ModelCallLimitMiddleware\2ebefore_model -.-> __end__;
+	ModelCallLimitMiddleware\2ebefore_model -.-> model;
+	__start__ --> ModelCallLimitMiddleware\2ebefore_model;
+	model --> ModelCallLimitMiddleware\2eafter_model;
+	nudge_to_tools\2eafter_model -.-> ModelCallLimitMiddleware\2ebefore_model;
+	nudge_to_tools\2eafter_model -.-> __end__;
+	nudge_to_tools\2eafter_model -.-> tools;
+	tools -.-> ModelCallLimitMiddleware\2ebefore_model;
+	tools -.-> __end__;
+	classDef default fill:#f2f0ff,line-height:1.2
+	classDef first fill-opacity:0
+	classDef last fill:#bfb6fc
+
+== 4. One run: expired_secret-1 | PAGER: checkout error rate above 5% ==
+ 0 check_health({"": ""}) -> {"healthy": false, "unhealthy_services": ["checkout", "payments"], "queues_over_
+ 1 recent_deploys({"": ""}) -> [{"t": "03:01", "service": "inventory", "version": "v2.4.9", "by": "ci"}]
+ 2 read_logs({"n": 20, "service": "checkout"}) -> ["03:01 INFO checkout handled request id=59367 in 76ms", "03:01 ERROR checkout u
+ 3 read_logs({"n": 20, "service": "payments"}) -> ["03:00 ERROR payments provider returned 401 Unauthorized: key expired", "03:00 
+ 4 rotate_secret({"service": "payments"}) -> "rotate_secret(payments) done."
+ 5 check_health({"": ""}) -> {"healthy": true, "unhealthy_services": [], "queues_over_limit": {}}
+ 6 finish({"cause": "expired_secret", "root_cause_service": "payments", "summary) -> ok
+finish(): {"cause": "expired_secret", "root_cause_service": "payments", "summary": "Payments provider key expired causing 401 errors; checkout forwarded 502s. Rotated secret resolved the issue."}
+stop finish | model calls 7 | tool calls 7 | healthy True | writes [('rotate_secret', 'payments', None)] | malformed-call retries 0
+tokens prompt 6813 + completion 677
+grade(): {'pass': True, 'clean': True, 'right_service': True}
+
+== 5. Same incident, Nightwatch v0 (baseline sample 0, replayed from cache) ==
+v0            : ['check_health', 'read_logs', 'read_logs', 'rotate_secret', 'check_health', 'finish'] grade True
+create_agent  : ['check_health', 'recent_deploys', 'read_logs', 'read_logs', 'rotate_secret', 'check_health', 'finish'] grade True
+same tool sequence: False

@@ -1,0 +1,23 @@
+langgraph 1.2.22
+
+== 1. upstream_deploy-0 through the StateGraph, node by node (stream_mode='updates') ==
+step 1 read_alert       update {"suspect": "checkout"}
+step 2 check_health     update {"unhealthy": ["checkout", "payments"]}
+step 3 read_logs        update {"evidence": ["04:13 ERROR checkout upstream payments returned 500 for POST /payments/v2/charge", "04:13 ERROR checkout upstream payments returned 500 for POST /payments/v2/charge"], "hops": 1}
+step 4 follow_upstream  update {"suspect": "payments"}
+step 5 read_logs        update {"evidence": ["04:13 ERROR payments KeyError: 'currency' in serializer (v1.3.5)"], "hops": 2}
+step 6 classify         update {"cause": "bad_deploy"}
+final   {"incident": "upstream_deploy-0", "alert": "checkout error rate above 5%", "suspect": "payments", "unhealthy": ["checkout", "payments"], "evidence": ["04:13 ERROR payments KeyError: 'currency' in serializer (v1.3.5)"], "hops": 2, "cause": "bad_deploy", "notes": ["alert names checkout", "unhealthy: ['checkout', 'payments']", "read checkout logs: 4 bad lines", "errors come from upstream payments", "read payments logs: 1 bad lines", "cause = bad_deploy"]}
+
+== 2. Same final state as the hand runner of lesson 4.1? ==
+upstream_deploy-0: True
+all 60 incidents: 60/60 final states identical
+
+== 3. Without a reducer: notes are overwritten, not appended ==
+with operator.add : ['alert names checkout', "unhealthy: ['checkout', 'payments']", 'read checkout logs: 4 bad lines', 'errors come from upstream payments', 'read payments logs: 1 bad lines', 'cause = bad_deploy']
+no reducer        : ['cause = bad_deploy']
+
+== 4. The reducer for chat messages: add_messages ==
+  HumanMessage id=h1  PAGER: checkout error rate above 5%
+  AIMessage    id=a1  I will read the payments logs.
+(2 messages, not 3: a message with a new id is appended, one with the same id replaces the old one)

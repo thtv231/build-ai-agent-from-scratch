@@ -1,0 +1,31 @@
+== 1. No tools: ask the model to read the logs ==
+reply: The checkout logs show a sudden spike in 502 Bad Gateway errors from the payment gateway, indicating a temporary outage that caused the checkout failures.
+times our code ran read_logs: 0
+
+== 2. With a tool: the model asks ==
+finish_reason: tool_calls
+content: None
+tool_call: {"id": "fc_1d4cd1c8-1cd7-4072-a425-c3e0e529391d", "name": "read_logs", "arguments": "{\"n\":10,\"service\":\"checkout\"}"}
+type of arguments: str
+times our code ran read_logs so far: 0
+
+== 3. Your code acts, then sends the result back ==
+ran read_logs({'n': 10, 'service': 'checkout'}) ->
+    04:05 INFO checkout handled request id=85086 in 179ms
+    04:09 INFO checkout handled request id=93973 in 121ms
+    04:10 WARN checkout slow GC pause 120ms
+    04:13 ERROR checkout upstream payments returned 500 for POST /payments/v2/charge
+    04:13 ERROR checkout upstream payments returned 500 for POST /payments/v2/charge
+    04:13 ERROR checkout upstream payments returned 500 for POST /payments/v2/charge
+    04:13 ERROR checkout upstream payments returned 500 for POST /payments/v2/charge
+    04:36 INFO checkout handled request id=57805 in 137ms
+    04:49 INFO checkout handled request id=31305 in 53ms
+    04:59 INFO checkout handled request id=58607 in 149ms
+times our code ran read_logs: 1
+messages now: ['system', 'user', 'assistant', 'tool']
+finish_reason: stop
+final answer: The checkout logs show a spike of errors with the payments service returning 500 for POST /payments/v2/charge, along with a warning about a slow GC pause.
+
+== 4. Usage of the two calls ==
+call 2 (ask) and call 3 (answer) together re-sent 4 messages in the last call
+last call usage: 382 prompt + 195 completion

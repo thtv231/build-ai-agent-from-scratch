@@ -1,0 +1,31 @@
+== 1. The 10 incidents (train split, one per template, sample 0) ==
+incident           diff   label service finish service fin healthy writes  exact  rule  both grade()
+bad_deploy-2       easy   web           web              y    True      2   True  True  True    True
+upstream_deploy-1  hard   payments      payments         y    True      2   True  True  True    True
+memory_leak-0      easy   inventory     None             n    True      4  False False False   False
+traffic_spike-0    medium web           None             n   False      2  False False False   False
+bad_flag-1         medium checkout      checkout         y    True      1   True  True  True    True
+stuck_consumer-1   medium email-worker  None             n   False      0  False False False   False
+expired_secret-1   hard   payments      payments         y    True      1   True  True  True    True
+pool_config-2      medium checkout      checkout         y    True      1   True  True  True    True
+disk_full-2        easy   search        None             n    True      2  False False False   False
+false_alarm-0      easy   web           web              y    True      0   True  True  True    True
+
+== 2. Rates (n = 10, k = 1) ==
+exact grader 6/10 | rule grader 6/10 | combined 6/10 | agent_v0.grade() pass 6/10
+
+== 3. Where the graders disagree ==
+none on these 10 runs
+
+== 4. The same graders on all 180 baseline runs (to find disagreements the 10 do not show) ==
+exact 133/180 | rule 126/180 | both 125/180 | exact only 8 | rule only 1
+  rule=False exact=True: upstream_deploy-3 s2 final={'cause': 'bad_deploy', 'root_cause_service': 'payments', 'summary': 'The checkout service was experiencing a 5%+ error rate due to upstream failures from the Payments service (v2.6.5). Rolling back Payments to the previous stable release resolved the issue and the system is now healthy.'} writes=[['rollback_deploy', 'payments', None], ['rollback_deploy', 'payments', None], ['rollback_deploy', 'payments', None]]
+  rule=True exact=False: memory_leak-1 s0 final={'cause': 'bad_deploy', 'root_cause_service': 'payments', 'summary': 'Recent payment service deploy caused a spike in GC pauses and OOMs on web, leading to high p95 latency. Restarted web instances and ran health check – system is now healthy.'} writes=[['restart_service', 'web', None]]
+  rule=False exact=True: bad_flag-0 s0 final={'cause': 'bad_flag', 'root_cause_service': 'web', 'summary': 'The new_pricing_engine_0 feature flag caused ValueErrors leading to high error rate. Disabled the flag and health restored.'} writes=[['set_flag', 'new_pricing_engine_0', 'off'], ['set_flag', 'new_pricing_engine_0', 'off'], ['set_flag', 'new_pricing_engine_0', 'off']]
+  rule=False exact=True: bad_flag-4 s2 final={'cause': 'bad_flag', 'root_cause_service': 'checkout', 'summary': 'Disabled ranker_v2_4 flag, which caused ValueErrors and elevated error rate; checkout now healthy.'} writes=[['set_flag', 'ranker_v2_4', 'off'], ['set_flag', 'ranker_v2_4', 'off'], ['set_flag', 'ranker_v2_4', 'off']]
+  rule=False exact=True: expired_secret-0 s0 final={'cause': 'expired_secret', 'root_cause_service': 'payments', 'summary': 'The payments service had an error rate >5% due to an expired provider secret key. Rotating the secret restored successful payment processing. Health check now indicates the system is healthy.'} writes=[['rotate_secret', 'payments', None], ['rotate_secret', 'payments', None], ['rotate_secret', 'payments', None], ['rotate_secret', 'payments', None]]
+  rule=False exact=True: expired_secret-0 s1 final={'cause': 'expired_secret', 'root_cause_service': 'payments', 'summary': 'Payments service had an expired provider key causing a high error rate. Rotated the secret and restarted the service, after which the health check shows all services healthy.'} writes=[['rotate_secret', 'payments', None], ['rotate_secret', 'payments', None], ['restart_service', 'payments', None], ['rotate_secret', 'payments', None]]
+  rule=False exact=True: expired_secret-2 s0 final={'cause': 'expired_secret', 'root_cause_service': 'payments', 'summary': 'Payments error rate caused by expired provider key. Rotated secret resolved issue; system back to healthy.'} writes=[['rotate_secret', 'payments', None], ['rotate_secret', 'payments', None], ['rotate_secret', 'payments', None]]
+  rule=False exact=True: expired_secret-4 s2 final={'cause': 'expired_secret', 'root_cause_service': 'payments', 'summary': 'Payments service was returning 401 Unauthorized due to an expired provider key, causing an error rate of ~50%. Rotating the secret restored authentication, bringing error rate back to normal. The system is healthy.'} writes=[['rotate_secret', 'payments', None], ['rotate_secret', 'payments', None], ['rotate_secret', 'payments', None]]
+  rule=False exact=True: disk_full-3 s2 final={'cause': 'disk_full', 'root_cause_service': 'search', 'summary': 'Search service ran out of disk space on /var/cache/search, causing high error rate. Cached cleared successfully; health check passed. Incident resolved.'} writes=[['clear_cache', 'search', None], ['clear_cache', 'search', None], ['clear_cache', 'search', None]]
+agent_v0.grade() pass on all 180: 124/180

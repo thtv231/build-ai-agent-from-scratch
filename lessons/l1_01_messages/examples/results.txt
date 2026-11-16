@@ -1,0 +1,73 @@
+warning: `VIRTUAL_ENV=D:\video\.venv-tts` does not match the project environment path `.venv` and will be ignored; use `--active` to target the active environment instead
+== 1. The request is just JSON ==
+{
+  "model": "openai/gpt-oss-20b",
+  "messages": [
+    {
+      "role": "system",
+      "content": "You are Nightwatch, the on-call assistant for the shop Brightcart. Answer in one sentence."
+    },
+    {
+      "role": "user",
+      "content": "Alert: checkout error rate is 23%. What does that mean?"
+    }
+  ],
+  "temperature": 0
+}
+
+== 2. Send it with plain HTTP ==
+status: 200
+top-level keys: ['id', 'object', 'created', 'model', 'choices', 'usage', 'usage_breakdown', 'system_fingerprint', 'x_groq', 'service_tier']
+role: assistant
+content: It means that nearly one in four checkout attempts are failing, indicating a significant issue that needs immediate investigation.
+finish_reason: stop
+usage: {'prompt_tokens': 108, 'completion_tokens': 102, 'total_tokens': 210}
+
+== 3. The same call with the SDK ==
+type: ChatCompletion
+role: assistant
+content: It means that nearly one in four checkout attempts are failing, indicating a significant issue that needs immediate investigation.
+total_tokens: 210
+
+== 4. The API remembers nothing ==
+call 1 reply: Got it—**payments** is the service that’s failing. Let me know what you’d like to do next (e.g., check logs, run tests, inspect the Dockerfile, etc.) and I’ll help you troubleshoot.
+call 2, new list only: unknown
+call 3, whole history: payments
+messages sent in call 3: 3
+
+== 5. Roles change behaviour ==
+system='Answer in one sentence.'          -> A 23 % checkout error rate is alarmingly high, indicating a critical problem that likely requires immediate investigation and remediation.
+system='Answer with exactly one word: '   -> HIGH
+== 6. Check-yourself: does the rule carry over? ==
+call 1 (rule + question): HIGH
+call 2 (new question only): **900 ms of search latency is high for most interactive use‑cases.**  
+Here’s a quick sanity check and what you can do about it.
+
+| Context | Typical target latency | What 900 ms feels like |
+|---------|------------------------|------------------------|
+| Web search / e‑commerce product lookup | < 200 ms (ideally < 100 ms) | Noticeable pause; users may think the page is stuck. |
+| Mobile app search | < 300 ms | Still acceptable, but 900 ms can cause frustration. |
+| Batch or analytical search (e.g., data‑warehouse queries) | < 1 s | 900 ms is fine; users expect a few seconds. |
+| Search‑as‑you‑type (autocomplete) | < 100 ms | 900 ms is unacceptable; the UI will lag. |
+
+So, if this latency is for a **user‑facing, real‑time search**, 900 ms is “bad” – it will degrade the user experience. If it’s a background or analytical query, it may be acceptable.
+
+---
+
+## Why it might be 900 ms
+
+| Layer | Typical culprit | Quick check |
+|-------|-----------------|-------------|
+| **Network** | High round‑trip time, packet loss | Ping the server; check MTU, DNS resolution. |
+| **Application server** | Heavy CPU, GC pauses, slow code | Profile the request path; look at thread dumps. |
+| **Database / Search engine** | Missing indexes, slow joins, full‑table scans | Run EXPLAIN plans; add indexes; consider sharding. |
+| **Caching** | Cache miss, cold cache | Warm the cache; use Redis/Memcached; enable query caching. |
+| **Infrastructure** | Under‑provisioned VMs, I/O bottlenecks | Monitor CPU, memory, disk I/O; scale horizontally. |
+
+---
+
+## How to improve it
+
+1. **Measure the distribution**  
+   * 
+words in call 2 reply: 273

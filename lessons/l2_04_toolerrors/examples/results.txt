@@ -1,0 +1,42 @@
+== 1. Read the wire: a malformed tool call (recorded earlier today, lesson 2.3 run) ==
+  [openai/gpt-oss-20b] 400 on turn 4: Failed to parse tool call arguments as JSON -> retry
+  [openai/gpt-oss-20b] 400 on turn 4: Failed to parse tool call arguments as JSON -> retry
+  [openai/gpt-oss-20b] 400 on turn 4: Failed to parse tool call arguments as JSON -> retry
+  [openai/gpt-oss-20b] 400 on turn 4: Failed to parse tool call arguments as JSON -> retry
+  -> same request, temperature 0, four retries, four identical failures
+
+== 2. What the model guesses for 'the payment service' ==
+real names: web, checkout, payments, inventory, search, email-worker
+
+policy crash   : correct data reached 0/8
+   crashed: KeyError        tried ['payment']
+   crashed: KeyError        tried ['payment']
+   crashed: KeyError        tried ['payment']
+   crashed: KeyError        tried ['payment']
+   crashed: KeyError        tried ['payment']
+   crashed: KeyError        tried ['payment']
+   crashed: KeyError        tried ['payment']
+   crashed: KeyError        tried ['payment']
+
+policy vague   : correct data reached 1/8
+   answered without data    tried ['payment', 'payment', 'payment']
+   answered                 tried ['payment', 'payments']
+   answered without data    tried ['payment', 'payment']
+   answered without data    tried ['payment', 'payment', 'payment']
+   answered without data    tried ['payment', 'payment']
+   answered without data    tried ['payment', 'payment', 'payment-service']
+   answered without data    tried ['payment', 'payment']
+   answered without data    tried ['payment', 'payment']
+
+policy helpful : correct data reached 8/8
+   answered                 tried ['payment', 'payments']
+   answered                 tried ['payment', 'payments']
+   answered                 tried ['payment', 'payments']
+   answered                 tried ['payment', 'payments']
+   answered                 tried ['payment', 'payments']
+   answered                 tried ['payment', 'payments']
+   answered                 tried ['payment', 'payments']
+   answered                 tried ['payment', 'payments']
+
+== 3. What the helpful error says ==
+ERROR: "unknown service 'payment-service'; known: web, checkout, payments, inventory, search, email-worker"

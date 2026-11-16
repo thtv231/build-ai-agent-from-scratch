@@ -1,0 +1,1 @@
+{"error_400": "Error code: 400 - 'messages.3' : for 'role:tool' the following must be satisfied[('messages.3.tool_call_id' : property 'tool_call_id' is missing)]"}

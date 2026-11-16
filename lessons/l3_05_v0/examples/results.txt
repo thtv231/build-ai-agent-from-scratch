@@ -1,0 +1,41 @@
+== 1. The tools Nightwatch v0 can call (17) ==
+  read  service_status(service)
+  read  read_logs(service, n)
+  read  recent_deploys()
+  read  list_flags()
+  read  config_changes()
+  read  queue_depth()
+  read  query_db(sql)
+  read  read_runbook(topic)
+  read  check_health()
+  WRITE restart_service(service)
+  WRITE rollback_deploy(service)
+  WRITE scale_service(service, replicas)
+  WRITE set_flag(flag, value)
+  WRITE set_config(service, key, value)
+  WRITE rotate_secret(service)
+  WRITE clear_cache(service)
+  end   finish(root_cause_service, cause, summary)
+
+== 2. The incident ==
+expired_secret-1 | difficulty hard | split train | PAGER: checkout error rate above 5%
+recent deploys: [{'t': '03:01', 'service': 'inventory', 'version': 'v2.4.9', 'by': 'ci'}]
+
+== 3. The trace (guards=True, max 14 steps, gpt-oss-20b, temperature 1.0) ==
+ 0 check_health({}) -> {'healthy': False, 'unhealthy_services': ['checkout', 'payments'], 'queues_over_limit': {}}
+ 1 read_logs({"n": 20, "service": "checkout"}) -> ['03:01 INFO checkout handled request id=59367 in 76ms', '03:01 ERROR checkout upstream payments ret
+ 2 read_logs({"n": 20, "service": "payments"}) -> ['03:00 ERROR payments provider returned 401 Unauthorized: key expired', '03:00 ERROR payments provi
+ 3 rotate_secret({"service": "payments"}) -> rotate_secret(payments) done.
+ 4 check_health({"": ""}) -> {'healthy': True, 'unhealthy_services': [], 'queues_over_limit': {}}
+ 5 finish({"cause": "expired_secret", "root_cause_service": "payments", "summary": "Paymen) -> ok
+
+== 4. Result ==
+finish(): {
+ "cause": "expired_secret",
+ "root_cause_service": "payments",
+ "summary": "Payments provider secret expired causing 401 errors, leading to checkout error rate spike. Rotated secret resolved."
+}
+stop finish | steps 6 | healthy True | writes [('rotate_secret', 'payments', None)]
+tokens prompt 5744 + completion 555
+hidden label: {'cause_service': 'payments', 'cause': 'expired_secret', 'fix': ['rotate_secret', 'payments', None]}
+grade(): {'pass': True, 'clean': True, 'right_service': True}
