@@ -1,0 +1,204 @@
+  [429] waiting 2s
+  [429] waiting 10s
+  [429] waiting 9s
+  [429] waiting 9s
+  [429] waiting 11s
+  [429] waiting 10s
+  [429] waiting 10s
+  [429] waiting 12s
+  [429] waiting 11s
+  [429] waiting 7s
+  [429] waiting 5s
+  [429] waiting 8s
+  [429] waiting 7s
+  [429] waiting 1s
+  [429] waiting 12s
+  [429] waiting 8s
+  [429] waiting 12s
+  [429] waiting 9s
+  [429] waiting 4s
+  [429] waiting 2s
+  [429] waiting 1s
+  [429] waiting 8s
+  [429] waiting 5s
+  [429] waiting 8s
+  [429] waiting 8s
+  [429] waiting 12s
+  [net] <urlopen error [WinError 10054] An existing connection was forcibly closed by the remote host>; retrying
+  [429] waiting 7s
+  [429] waiting 1s
+  [429] waiting 11s
+  [429] waiting 8s
+  [429] waiting 11s
+  [429] waiting 8s
+  [429] waiting 1s
+  [429] waiting 1s
+  [429] waiting 5s
+  [429] waiting 8s
+  [429] waiting 4s
+  [429] waiting 6s
+  [429] waiting 9s
+  [net] <urlopen error [WinError 10054] An existing connection was forcibly closed by the remote host>; retrying
+  [429] waiting 7s
+  [429] waiting 11s
+  [429] waiting 2s
+  [429] waiting 10s
+  [429] waiting 12s
+  [429] waiting 3s
+  [429] waiting 3s
+  [429] waiting 7s
+  [429] waiting 2s
+  [429] waiting 10s
+  [429] waiting 5s
+  [429] waiting 12s
+  [429] waiting 9s
+  [429] waiting 4s
+  [429] waiting 7s
+  [429] waiting 1s
+  [429] waiting 3s
+  [429] waiting 6s
+  [429] waiting 10s
+  [429] waiting 9s
+  [429] waiting 9s
+  [429] waiting 1s
+  [429] waiting 12s
+  [429] waiting 1s
+  [429] waiting 6s
+  [429] waiting 6s
+  [429] waiting 9s
+  [429] waiting 3s
+  [429] waiting 1s
+  [429] waiting 7s
+  [429] waiting 1s
+  [429] waiting 2s
+  [429] waiting 3s
+  [429] waiting 1s
+  [429] waiting 10s
+  [429] waiting 6s
+  [429] waiting 11s
+  [429] waiting 9s
+  [429] waiting 1s
+  [429] waiting 2s
+  [429] waiting 7s
+  [429] waiting 2s
+  [429] waiting 8s
+  [429] waiting 2s
+  [429] waiting 6s
+  [429] waiting 1s
+  [429] waiting 3s
+  [429] waiting 6s
+  [429] waiting 3s
+  [429] waiting 8s
+  [429] waiting 1s
+  [429] waiting 9s
+  [429] waiting 3s
+  [429] waiting 6s
+  [429] waiting 10s
+  [429] waiting 2s
+  [429] waiting 2s
+  [429] waiting 2s
+  [429] waiting 2s
+  [429] waiting 1s
+  [429] waiting 4s
+  [429] waiting 3s
+  [429] waiting 3s
+  [429] waiting 10s
+  [429] waiting 10s
+  [429] waiting 1s
+  [429] waiting 10s
+  [429] waiting 12s
+  [429] waiting 1s
+  [429] waiting 12s
+  [429] waiting 8s
+  [429] waiting 11s
+  [429] waiting 10s
+  [429] waiting 11s
+  [429] waiting 1s
+  [429] waiting 9s
+  [429] waiting 3s
+  [429] waiting 1s
+  [429] waiting 4s
+  [429] waiting 2s
+  [429] waiting 1s
+  [429] waiting 6s
+  [429] waiting 11s
+  [429] waiting 1s
+  [429] waiting 1s
+  [429] waiting 8s
+  [429] waiting 12s
+  [429] waiting 11s
+  [429] waiting 1s
+  [429] waiting 8s
+  [429] waiting 12s
+  [429] waiting 13s
+  [429] waiting 10s
+  [429] waiting 1s
+  [429] waiting 6s
+  [429] waiting 7s
+  [429] waiting 5s
+  [429] waiting 1s
+  [429] waiting 4s
+  [429] waiting 1s
+  [429] waiting 1s
+  [429] waiting 1s
+  [429] waiting 2s
+  [429] waiting 8s
+  [429] waiting 4s
+  [429] waiting 9s
+  [429] waiting 10s
+  [429] waiting 4s
+  [429] waiting 2s
+  [429] waiting 6s
+  [429] waiting 11s
+  [429] waiting 10s
+  [429] waiting 11s
+  [429] waiting 1s
+  [429] waiting 2s
+  [429] waiting 9s
+  [429] waiting 8s
+  [429] waiting 5s
+  [429] waiting 5s
+  [429] waiting 7s
+  [429] waiting 11s
+  [429] waiting 11s
+  [429] waiting 10s
+  [429] waiting 8s
+  [429] waiting 8s
+  [429] waiting 11s
+  [429] waiting 9s
+  [429] waiting 12s
+  [429] waiting 9s
+  [429] waiting 8s
+  [429] waiting 12s
+  [429] waiting 1s
+  [429] waiting 5s
+  [429] waiting 3s
+  [429] waiting 10s
+  [429] waiting 10s
+  [429] waiting 4s
+  [429] waiting 11s
+  [429] waiting 2s
+  [429] waiting 1s
+  [429] waiting 1s
+bad_deploy-0           s0 PASS steps= 8 tok=7214
+bad_deploy-0           s1 fail steps=14 tok=13027
+bad_deploy-0           s2 PASS steps=10 tok=8232
+upstream_deploy-0      s0 PASS steps= 7 tok=7932
+upstream_deploy-0      s1 fail steps=14 tok=16367
+upstream_deploy-0      s2 PASS steps=12 tok=13156
+memory_leak-0          s0 fail steps=14 tok=10687
+memory_leak-0          s1 fail steps=14 tok=15419
+memory_leak-0          s2 PASS steps=12 tok=12600
+traffic_spike-0        s0 fail steps=14 tok=15365
+traffic_spike-0        s1 fail steps=14 tok=13048
+traffic_spike-0        s2 PASS steps= 9 tok=9791
+bad_flag-0             s0 PASS steps= 9 tok=6437
+bad_flag-0             s1 PASS steps=14 tok=8010
+bad_flag-0             s2 PASS steps= 8 tok=6055
+STOP at stuck_consumer-0 s0: rate limit, retry after 157s: {"error":{"message":"Rate limit reached for model `openai/gpt-oss-20b` in organization `org_01m71tg4txe2ybm64a6mne7bah` 
+
+runs=15 incidents=5 model=openai/gpt-oss-20b
+pass rate 60%  95% CI [40%, 80%]  pass@3 100%  pass^3 20%  incidents that flip between samples 80%
+per template: {'bad_deploy': '67%', 'bad_flag': '100%', 'memory_leak': '33%', 'traffic_spike': '33%', 'upstream_deploy': '67%'}
+tokens/run mean 10889  total 163340
+GO for Ch13

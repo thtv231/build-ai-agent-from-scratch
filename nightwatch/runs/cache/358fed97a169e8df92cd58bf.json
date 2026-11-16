@@ -1,0 +1,1 @@
+{"error": "tool_use_failed", "detail": "{\"error\":{\"message\":\"Tool call validation failed: tool call validation failed: parameters for tool clear_cache did not match schema: errors: [missing properties: 'service']\",\"type\":\"invalid_request_error\",\"code\":\"tool_use_failed\",\"failed_generation\":\"{\\\"name\\\": \\\"clear_cache\\\", \\\"arguments\\\": {\\\"nam"}

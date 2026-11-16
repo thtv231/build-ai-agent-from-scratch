@@ -1,0 +1,1 @@
+{"error": "tool_use_failed", "detail": "{\"error\":{\"message\":\"Tool call validation failed: tool call validation failed: attempted to call tool '.functions.finish\\u003c|channel|\\u003ecommentary' which was not in request.tools\",\"type\":\"invalid_request_error\",\"code\":\"tool_use_failed\",\"failed_generation\":\"{\\\"name\\\": \\\".functions.finish\\u003c|c"}

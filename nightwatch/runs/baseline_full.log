@@ -1,0 +1,194 @@
+  [net] <urlopen error [WinError 10054] An existing connection was forcibly closed by the remote host>; retrying
+  [net] <urlopen error [WinError 10054] An existing connection was forcibly closed by the remote host>; retrying
+  [net] <urlopen error [WinError 10054] An existing connection was forcibly closed by the remote host>; retrying
+  [net] <urlopen error [WinError 10054] An existing connection was forcibly closed by the remote host>; retrying
+  [net] <urlopen error [WinError 10054] An existing connection was forcibly closed by the remote host>; retrying
+  [net] <urlopen error [WinError 10054] An existing connection was forcibly closed by the remote host>; retrying
+  [net] <urlopen error [WinError 10054] An existing connection was forcibly closed by the remote host>; retrying
+bad_deploy-0           s0 PASS steps=12 tok=11321
+bad_deploy-0           s1 PASS steps= 6 tok=6238
+bad_deploy-0           s2 PASS steps= 6 tok=6269
+bad_deploy-1           s0 PASS steps=13 tok=11027
+bad_deploy-1           s1 PASS steps=14 tok=15710
+bad_deploy-1           s2 PASS steps=10 tok=10547
+bad_deploy-2           s0 PASS steps= 9 tok=9139
+bad_deploy-2           s1 PASS steps= 6 tok=6309
+bad_deploy-2           s2 PASS steps= 9 tok=9681
+bad_deploy-3           s0 PASS steps= 6 tok=6238
+bad_deploy-3           s1 PASS steps= 8 tok=9552
+bad_deploy-3           s2 PASS steps= 8 tok=9405
+bad_deploy-4           s0 PASS steps= 7 tok=7011
+bad_deploy-4           s1 fail steps=14 tok=15221
+bad_deploy-4           s2 PASS steps= 9 tok=10608
+bad_deploy-5           s0 PASS steps= 7 tok=7890
+bad_deploy-5           s1 PASS steps=10 tok=9439
+bad_deploy-5           s2 fail steps=14 tok=16585
+upstream_deploy-0      s0 PASS steps= 7 tok=8007
+upstream_deploy-0      s1 PASS steps=11 tok=10613
+upstream_deploy-0      s2 PASS steps= 7 tok=7999
+upstream_deploy-1      s0 PASS steps=13 tok=14008
+upstream_deploy-1      s1 PASS steps= 9 tok=11347
+upstream_deploy-1      s2 PASS steps= 8 tok=7794
+upstream_deploy-2      s0 PASS steps= 7 tok=7894
+upstream_deploy-2      s1 PASS steps=13 tok=16118
+upstream_deploy-2      s2 PASS steps=14 tok=15174
+upstream_deploy-3      s0 PASS steps= 7 tok=7874
+upstream_deploy-3      s1 PASS steps=13 tok=16369
+upstream_deploy-3      s2 fail steps=12 tok=12522
+upstream_deploy-4      s0 PASS steps=11 tok=9885
+upstream_deploy-4      s1 PASS steps=12 tok=14557
+upstream_deploy-4      s2 PASS steps=13 tok=14474
+upstream_deploy-5      s0 PASS steps= 9 tok=9525
+upstream_deploy-5      s1 fail steps=14 tok=18480
+upstream_deploy-5      s2 fail steps=14 tok=14097
+memory_leak-0          s0 fail steps=14 tok=16012
+memory_leak-0          s1 PASS steps=13 tok=12183
+memory_leak-0          s2 fail steps=14 tok=13917
+memory_leak-1          s0 fail steps=11 tok=9724
+memory_leak-1          s1 fail steps=14 tok=12026
+memory_leak-1          s2 fail steps=14 tok=11930
+memory_leak-2          s0 fail steps=14 tok=13484
+memory_leak-2          s1 fail steps=14 tok=20054
+memory_leak-2          s2 PASS steps=13 tok=13863
+memory_leak-3          s0 PASS steps=14 tok=17616
+memory_leak-3          s1 PASS steps=13 tok=15327
+memory_leak-3          s2 fail steps=14 tok=8304
+memory_leak-4          s0 fail steps=14 tok=12115
+memory_leak-4          s1 fail steps=14 tok=15336
+memory_leak-4          s2 PASS steps=12 tok=12091
+memory_leak-5          s0 PASS steps=13 tok=15715
+memory_leak-5          s1 fail steps=14 tok=15554
+memory_leak-5          s2 fail steps=14 tok=16547
+traffic_spike-0        s0 fail steps=14 tok=15198
+traffic_spike-0        s1 PASS steps= 8 tok=7971
+traffic_spike-0        s2 PASS steps=12 tok=10886
+traffic_spike-1        s0 fail steps=14 tok=20647
+traffic_spike-1        s1 fail steps=14 tok=16434
+traffic_spike-1        s2 fail steps=14 tok=15844
+traffic_spike-2        s0 fail steps=14 tok=18403
+traffic_spike-2        s1 PASS steps=10 tok=12264
+traffic_spike-2        s2 PASS steps=10 tok=11840
+traffic_spike-3        s0 fail steps=14 tok=13651
+traffic_spike-3        s1 PASS steps=14 tok=12830
+traffic_spike-3        s2 fail steps=14 tok=15872
+traffic_spike-4        s0 PASS steps=12 tok=15373
+traffic_spike-4        s1 fail steps=14 tok=21636
+traffic_spike-4        s2 PASS steps=14 tok=12715
+traffic_spike-5        s0 PASS steps=14 tok=13266
+traffic_spike-5        s1 PASS steps= 9 tok=8346
+traffic_spike-5        s2 PASS steps=11 tok=15058
+bad_flag-0             s0 fail steps=11 tok=9205
+bad_flag-0             s1 PASS steps=10 tok=6586
+bad_flag-0             s2 PASS steps=14 tok=14318
+bad_flag-1             s0 PASS steps= 8 tok=6434
+bad_flag-1             s1 PASS steps=14 tok=13254
+bad_flag-1             s2 PASS steps=12 tok=8601
+bad_flag-2             s0 fail steps=14 tok=11406
+bad_flag-2             s1 PASS steps=13 tok=6461
+bad_flag-2             s2 PASS steps= 7 tok=5486
+bad_flag-3             s0 PASS steps=11 tok=12643
+bad_flag-3             s1 PASS steps=11 tok=9765
+bad_flag-3             s2 PASS steps=10 tok=11041
+bad_flag-4             s0 PASS steps= 7 tok=6215
+bad_flag-4             s1 fail steps=14 tok=12890
+bad_flag-4             s2 fail steps=14 tok=15425
+bad_flag-5             s0 PASS steps= 6 tok=5989
+bad_flag-5             s1 PASS steps=13 tok=12055
+bad_flag-5             s2 fail steps=14 tok=13961
+stuck_consumer-0       s0 PASS steps= 8 tok=8264
+stuck_consumer-0       s1 fail steps=14 tok=16292
+stuck_consumer-0       s2 fail steps=14 tok=10818
+stuck_consumer-1       s0 fail steps=14 tok=13086
+stuck_consumer-1       s1 fail steps=14 tok=11271
+stuck_consumer-1       s2 fail steps=14 tok=16806
+stuck_consumer-2       s0 fail steps=14 tok=21544
+stuck_consumer-2       s1 fail steps=14 tok=11717
+stuck_consumer-2       s2 PASS steps=10 tok=9763
+stuck_consumer-3       s0 PASS steps=12 tok=13516
+stuck_consumer-3       s1 fail steps=14 tok=14429
+stuck_consumer-3       s2 PASS steps=13 tok=15501
+stuck_consumer-4       s0 fail steps=14 tok=10466
+stuck_consumer-4       s1 fail steps=14 tok=12872
+stuck_consumer-4       s2 PASS steps=12 tok=11428
+stuck_consumer-5       s0 fail steps=14 tok=16793
+stuck_consumer-5       s1 fail steps=14 tok=14759
+stuck_consumer-5       s2 fail steps=14 tok=18405
+expired_secret-0       s0 fail steps=12 tok=12195
+expired_secret-0       s1 fail steps=14 tok=11012
+expired_secret-0       s2 PASS steps= 9 tok=8090
+expired_secret-1       s0 PASS steps= 6 tok=6265
+expired_secret-1       s1 fail steps=14 tok=15109
+expired_secret-1       s2 PASS steps=10 tok=9575
+expired_secret-2       s0 fail steps=10 tok=9679
+expired_secret-2       s1 PASS steps= 7 tok=7009
+expired_secret-2       s2 fail steps=14 tok=8052
+expired_secret-3       s0 PASS steps= 7 tok=7587
+expired_secret-3       s1 PASS steps= 9 tok=10591
+expired_secret-3       s2 PASS steps=12 tok=11820
+expired_secret-4       s0 PASS steps= 9 tok=6359
+expired_secret-4       s1 PASS steps= 9 tok=9391
+expired_secret-4       s2 fail steps=13 tok=12766
+expired_secret-5       s0 PASS steps=14 tok=13938
+expired_secret-5       s1 PASS steps=14 tok=15132
+expired_secret-5       s2 PASS steps=11 tok=11332
+pool_config-0          s0 PASS steps= 9 tok=8741
+pool_config-0          s1 PASS steps= 7 tok=7318
+pool_config-0          s2 PASS steps=13 tok=11756
+pool_config-1          s0 PASS steps=13 tok=12784
+pool_config-1          s1 PASS steps=10 tok=11913
+pool_config-1          s2 PASS steps= 9 tok=9515
+pool_config-2          s0 PASS steps=12 tok=11000
+pool_config-2          s1 PASS steps= 9 tok=9434
+pool_config-2          s2 PASS steps= 8 tok=8412
+pool_config-3          s0 fail steps=14 tok=12839
+pool_config-3          s1 fail steps=14 tok=13113
+pool_config-3          s2 fail steps=14 tok=18334
+pool_config-4          s0 fail steps=14 tok=13773
+pool_config-4          s1 PASS steps= 9 tok=9061
+pool_config-4          s2 PASS steps= 8 tok=8393
+pool_config-5          s0 PASS steps=11 tok=10311
+pool_config-5          s1 PASS steps=12 tok=13768
+pool_config-5          s2 PASS steps= 7 tok=7570
+disk_full-0            s0 PASS steps=12 tok=10604
+disk_full-0            s1 PASS steps=14 tok=11958
+disk_full-0            s2 PASS steps= 4 tok=3856
+disk_full-1            s0 PASS steps=12 tok=10405
+disk_full-1            s1 PASS steps= 6 tok=5311
+disk_full-1            s2 PASS steps= 8 tok=9446
+disk_full-2            s0 fail steps=14 tok=12011
+disk_full-2            s1 PASS steps= 9 tok=8606
+disk_full-2            s2 PASS steps=10 tok=9420
+disk_full-3            s0 PASS steps= 8 tok=6540
+disk_full-3            s1 PASS steps=13 tok=10321
+disk_full-3            s2 fail steps=12 tok=12894
+disk_full-4            s0 PASS steps=11 tok=7807
+disk_full-4            s1 PASS steps=12 tok=11345
+disk_full-4            s2 PASS steps= 8 tok=7409
+disk_full-5            s0 PASS steps= 7 tok=5249
+disk_full-5            s1 PASS steps= 5 tok=4902
+disk_full-5            s2 PASS steps=13 tok=11071  [net] <urlopen error [WinError 10054] An existing connection was forcibly closed by the remote host>; retrying
+
+false_alarm-0          s0 PASS steps=12 tok=9971
+false_alarm-0          s1 PASS steps=10 tok=8868
+false_alarm-0          s2 PASS steps= 3 tok=2635
+false_alarm-1          s0 PASS steps= 8 tok=7524
+false_alarm-1          s1 PASS steps= 4 tok=4024
+false_alarm-1          s2 PASS steps= 6 tok=5254
+false_alarm-2          s0 PASS steps= 6 tok=3945
+false_alarm-2          s1 PASS steps= 8 tok=5306
+false_alarm-2          s2 PASS steps= 5 tok=4234
+false_alarm-3          s0 PASS steps=14 tok=12874
+false_alarm-3          s1 PASS steps= 7 tok=4832
+false_alarm-3          s2 PASS steps= 7 tok=7583
+false_alarm-4          s0 PASS steps= 5 tok=3729
+false_alarm-4          s1 PASS steps= 6 tok=5064
+false_alarm-4          s2 fail steps=12 tok=10867
+false_alarm-5          s0 PASS steps= 5 tok=4914
+false_alarm-5          s1 PASS steps=10 tok=9135
+false_alarm-5          s2 PASS steps= 3 tok=2547
+
+runs=180 incidents=60 model=openai/gpt-oss-20b
+pass rate 69%  95% CI [61%, 77%]  pass@3 92%  pass^3 43%  incidents that flip between samples 48%
+per template: {'bad_deploy': '89%', 'bad_flag': '72%', 'disk_full': '89%', 'expired_secret': '67%', 'false_alarm': '94%', 'memory_leak': '33%', 'pool_config': '78%', 'stuck_consumer': '28%', 'traffic_spike': '56%', 'upstream_deploy': '83%'}
+tokens/run mean 11060  total 1990822
+outside 35-60%: adjust difficulty before Ch13
