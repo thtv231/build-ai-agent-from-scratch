@@ -24,6 +24,7 @@ from langchain.agents.middleware import (ModelCallLimitMiddleware, ModelResponse
                                          wrap_tool_call)
 from langchain_core.messages import AIMessage, HumanMessage, messages_from_dict, messages_to_dict
 from langchain_core.tools import StructuredTool
+import os
 from langchain_groq import ChatGroq
 
 ROOT = Path(__file__).resolve().parents[3]
@@ -43,8 +44,10 @@ class Malformed(Exception):
 
 
 def make_model(temperature=1.0):
+    # no key yet? replies come from the record/replay cache; the client just needs *some* key to start
+    key = os.environ.get("GROQ_API_KEY") or "replay-only-no-key"
     return ChatGroq(model="openai/gpt-oss-20b", temperature=temperature, reasoning_effort="medium",
-                    max_tokens=2048, max_retries=6)
+                    max_tokens=2048, max_retries=6, api_key=key)
 
 
 def make_tools(world, box):
